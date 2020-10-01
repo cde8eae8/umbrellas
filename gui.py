@@ -15,7 +15,7 @@ class Gui(QMainWindow):
         if (len(set(w[0] for w in widget_types)) != len(widget_types)):
             raise Exception('duplicated keys in gui description')
 
-        self.widgets = [Widget(descr, t()) for name, t, descr in widget_types]
+        self.widgets = [Widget(descr, t(), *args) for name, t, descr, *args in widget_types]
         for w in self.widgets:
             layout.addWidget(w)
         self.widgets = {name:w for (name, *oth), w in zip(widget_types, self.widgets)}

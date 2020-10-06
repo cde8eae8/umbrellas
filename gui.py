@@ -83,10 +83,8 @@ class Description:
         self.user_description = user_description
 
 def startGui(callback, description):
-    app = QApplication([])
     gui = Gui(callback, description)
     gui.show()
-    app.exec_()
 
 
 class Widget(QWidget):

@@ -2,6 +2,76 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import threading
+import importlib
+import os.path
+
+
+#TODO: disable multi choice
+#TODO: disable descriptions editing
+#TODO: add run button
+#TODO: if none selected
+
+class ModuleInfo:
+    def __init__(self, module):
+        self.module = module
+
+    def info(self, name, description, args):
+        self.name = name
+        self.description = description
+        self.args = args
+
+    def run(self, args):
+        self.module.run(args)
+
+class MainWindow(QMainWindow):
+    def __init__(self, modules, *args):
+        QMainWindow.__init__(self, *args)
+        self.modules = []
+        for m in modules:
+            print(self.modules)
+            module = importlib.import_module(f'modules.{m}')
+            minfo = ModuleInfo(module)
+            module.register(minfo)
+            self.modules.append(minfo)
+            print(minfo.name, minfo.args)
+        widget = QWidget()
+        layout = QHBoxLayout()
+        descrLayout = QVBoxLayout()
+        table = QTableWidget()
+        table.setColumnCount(1)
+        table.setRowCount(len(self.modules))
+
+        table.setEditTriggers(QAbstractItemView.NoEditTriggers);
+        table.horizontalHeader().setStretchLastSection(True);
+        table.horizontalHeader().hide()
+        table.verticalHeader().hide()
+        for i, m in enumerate(self.modules):
+            table.setItem(i, 0, QTableWidgetItem(m.name))
+        self.description = QTextEdit()
+        self.description.setReadOnly(True)
+        self.runButton = QPushButton('Выбрать')
+        descrLayout.addWidget(table)
+        descrLayout.addWidget(self.runButton)
+        layout.addLayout(descrLayout)
+        layout.addWidget(self.description)
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
+        self.selected = -1
+        table.cellClicked.connect(lambda x, y: self._cellActivated(x, y))
+        self.runButton.clicked.connect(lambda: self._runScript())
+
+    def start(self):
+        self.show()
+
+    def _cellActivated(self, row, column):
+        self.description.setText(self.modules[row].description)
+        self.selected = row
+    
+    def _runScript(self):
+        self.runButton.setEnabled(False)
+        if self.selected != -1:
+            self.modules[self.selected].run([])
+        self.runButton.setEnabled(True)
 
 class Gui(QMainWindow):
     def __init__(self, callback, widget_types, *args):

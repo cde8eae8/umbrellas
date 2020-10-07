@@ -7,6 +7,7 @@ import os
 import json
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+os.chdir(SCRIPT_DIR)
 
 import sys
 sys.path.insert(0,os.path.join(SCRIPT_DIR, '..'))

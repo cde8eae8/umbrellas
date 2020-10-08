@@ -20,7 +20,7 @@ if update.has_new_version():
     if (ans == QMessageBox.Yes):
         #args = shlex.split(f'{sys.executable} {os.path.join(SCRIPT_DIR, "../update.py")}')
         args = [sys.executable, os.path.join(SCRIPT_DIR, "..", "update.py")]
-        subprocess.Popen(args, start_new_session=True, close_fds=True)
+        subprocess.Popen(args, start_new_session=True, close_fds=True, shell=False, executable=sys.executable)
         sys.exit(0)
 
 with open('modules.json', 'r') as f:
